@@ -1,0 +1,14 @@
+<html>
+  <head>
+    <title>test article</title>
+  </head>
+  <body>
+    <h1>test article</h1>
+    <form action="/articles/test" method="post">
+      <label for="content">Content:</label><br>
+      <textarea id="content" name="content" rows="40" cols="80">{{ .Content }}</textarea>
+      <br>
+      <input type="submit" value="Update">
+    </form>
+  </body>
+</html>
