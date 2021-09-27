@@ -4,12 +4,10 @@
   </head>
   <body>
     <h1>{{ .Title }}</h1>
+    <p>This article does not exist (yet). You can create it with the button below</p>
     <form action="/articles/{{ .Title }}" method="post">
-      <label for="content">Content:</label><br>
-      <textarea id="content" name="content" rows="40" cols="80">{{ .Content }}</textarea>
-      <br>
-      <input type="submit" value="Update">
-    </form>
+      <input type="hidden" id="content" name="content" value="">
+      <input type="submit" value="Create">
     <hr>
     <p><a href="/">Home</a></p>
   </body>

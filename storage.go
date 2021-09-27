@@ -3,76 +3,36 @@ package main
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"path/filepath"
 	"strconv"
 	"time"
 )
 
+var (
+	errArticleDNE = errors.New("error: article does not exist")
+)
+
 type storage interface {
-	Exists(name string) (bool, error)
-	Create(name string) error
-	Read(name string) (string, error)
-	Write(name, content string) error
+	WriteArticle(name, content string) error
+	ReadArticle(name string) (string, error)
+	ReadArticleRevision(name, rev string) (string, error)
+	ListArticleRevisions(name string) ([]string, error)
+	ListArticles() ([]string, error)
 }
 
 type localStorage struct {
-	basedir string
+	baseDirectory string
 }
 
-func (l *localStorage) relpath(dir, file string) string {
-	return filepath.Join(l.basedir, dir, file)
-}
-
-func (l *localStorage) Exists(name string) (bool, error) {
-	if _, err := os.Open(l.relpath(name, "current")); err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return false, nil
-		} else {
-			return false, fmt.Errorf("couldn't check file existence: %w", err)
+func (l *localStorage) WriteArticle(name, content string) error {
+	if !l.exists(name) {
+		err := os.Mkdir(l.relpath(name), 0755)
+		if err != nil {
+			return fmt.Errorf("could not make directory: %w", err)
 		}
-	} else {
-		return true, nil
-	}
-}
-
-func (l *localStorage) Create(name string) error {
-	log.Println("here we go?")
-	if ok, _ := l.Exists(name); ok {
-		return nil
 	}
 
-	log.Println("making: ", filepath.Join(l.basedir, name))
-	err := os.Mkdir(filepath.Join(l.basedir, name), 0755)
-	if err != nil {
-		return fmt.Errorf("could not make directory: %w", err)
-	}
-
-	fname := l.relpath(name, ts())
-	err = os.WriteFile(fname, []byte(""), 0644)
-	if err != nil {
-		return fmt.Errorf("could not write file: %w", err)
-	}
-
-	err = os.Symlink(fname, l.relpath(name, "current"))
-	if err != nil {
-		return fmt.Errorf("could not symlink: %w", err)
-	}
-
-	return nil
-}
-
-func (l *localStorage) Read(name string) (string, error) {
-	data, err := os.ReadFile(l.relpath(name, "current"))
-	if err != nil {
-		return "", fmt.Errorf("could not read file: %w", err)
-	}
-
-	return string(data), nil
-}
-
-func (l *localStorage) Write(name, content string) error {
 	fname := l.relpath(name, ts())
 	err := os.WriteFile(fname, []byte(content), 0644)
 	if err != nil {
@@ -97,6 +57,71 @@ func (l *localStorage) Write(name, content string) error {
 	return nil
 }
 
+func (l *localStorage) ReadArticle(name string) (string, error) {
+	return l.ReadArticleRevision(name, "current")
+}
+
+func (l *localStorage) ReadArticleRevision(name, revision string) (string, error) {
+	if !l.exists(name) {
+		return "", errArticleDNE
+	}
+
+	data, err := os.ReadFile(l.relpath(name, revision))
+	if err != nil {
+		return "", fmt.Errorf("could not read file: %w", err)
+	}
+
+	return string(data), nil
+}
+
+func (l *localStorage) ListArticleRevisions(name string) ([]string, error) {
+	if !l.exists(name) {
+		return nil, errArticleDNE
+	}
+
+	entries, err := os.ReadDir(l.relpath(name))
+	if err != nil {
+		return nil, fmt.Errorf("could not read directory: %w", err)
+	}
+
+	names := []string{}
+	for _, e := range entries {
+		if !e.IsDir() {
+			names = append(names, e.Name())
+		}
+	}
+
+	return names, nil
+}
+
+func (l *localStorage) ListArticles() ([]string, error) {
+	entries, err := os.ReadDir(l.baseDirectory)
+	if err != nil {
+		return nil, fmt.Errorf("could not read directory: %w", err)
+	}
+
+	names := []string{}
+	for _, e := range entries {
+		if e.IsDir() {
+			names = append(names, e.Name())
+		}
+	}
+
+	return names, nil
+}
+
 func ts() string {
 	return strconv.FormatInt(time.Now().UnixNano(), 10)
+}
+
+func (l *localStorage) relpath(elem ...string) string {
+	return filepath.Join(append([]string{l.baseDirectory}, elem...)...)
+}
+
+func (l *localStorage) exists(name string) bool {
+	if _, err := os.Stat(l.relpath(name, "current")); err != nil {
+		return false
+	} else {
+		return true
+	}
 }

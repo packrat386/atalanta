@@ -1,10 +1,13 @@
 <html>
   <head>
-    <title>test article</title>
+    <title>{{ .Title }}</title>
   </head>
   <body>
-    <h1>test article</h1>
-    <p>Content:</p>
+    <h1>{{ .Title }}</h1>
     <p>{{ .Content }}</p>
+    <hr>
+    <p><a href="/articles/{{ .Title }}?edit=true">Edit</a></p>
+    <p><a href="/articles/{{ .Title }}?raw=true">Raw</a></p>
+    <p><a href="/">Home</a></p>
   </body>
 </html>
