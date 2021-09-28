@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>{{ .Title }} - Revisions</title>
+    <link rel="stylesheet" type="text/css" href="/styles.css"/>
+  </head>
+  <body>
+    <h1>Revisions of {{ .Title }}</h1>
+    {{ $title := .Title }}
+    {{ range $name := .RevisionIDs }}
+    <p><a href="/archives/{{ $title }}?revision_id={{ $name }}">{{ $name }}</a></p>
+    {{ end }}
+    <hr>
+    <p><a href="/">Home</a></p>
+  </body>
+</html>

@@ -40,7 +40,10 @@ func main() {
 	}
 
 	mux := http.NewServeMux()
+	mux.Handle("/goto", newGotoHandler())
 	mux.Handle("/articles/", newArticleHandler(storage, tmpl))
+	mux.Handle("/articles", newArticlesHandler(storage, tmpl))
+	mux.Handle("/archives/", newArchiveHandler(storage, tmpl))
 	mux.Handle("/", http.FileServer(http.FS(public)))
 
 	srv := http.Server{

@@ -1,0 +1,14 @@
+<html>
+  <head>
+    <title>List of Articles</title>
+    <link rel="stylesheet" type="text/css" href="/styles.css"/>
+  </head>
+  <body>
+    <h1>List of Articles</h1>
+    {{ range $name := . }}
+    <p><a href="/articles/{{ $name }}">{{ $name }}</a></p>
+    {{ end }}
+    <hr>
+    <p><a href="/">Home</a></p>
+  </body>
+</html>
