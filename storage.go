@@ -14,10 +14,10 @@ var (
 )
 
 type storage interface {
-	WriteArticle(name, content string) error
-	ReadArticle(name string) (string, error)
-	ReadArticleRevision(name, rev string) (string, error)
-	ListArticleRevisions(name string) ([]string, error)
+	WriteArticle(title, content string) error
+	ReadArticle(title string) (string, error)
+	ReadArticleVersion(title, version string) (string, error)
+	ListArticleVersions(title string) ([]string, error)
 	ListArticles() ([]string, error)
 }
 
@@ -25,15 +25,15 @@ type localStorage struct {
 	baseDirectory string
 }
 
-func (l *localStorage) WriteArticle(name, content string) error {
-	if !l.exists(name) {
-		err := os.Mkdir(l.relpath(name), 0755)
+func (l *localStorage) WriteArticle(title, content string) error {
+	if !l.exists(title) {
+		err := os.Mkdir(l.relpath(title), 0755)
 		if err != nil {
 			return fmt.Errorf("could not make directory: %w", err)
 		}
 	}
 
-	fname := l.relpath(name, ts())
+	fname := l.relpath(title, ts())
 	err := os.WriteFile(fname, []byte(content), 0644)
 	if err != nil {
 		return fmt.Errorf("could not write file: %w", err)
@@ -46,7 +46,7 @@ func (l *localStorage) WriteArticle(name, content string) error {
 	}
 
 	// is this atomic?
-	err = os.Rename(newsym, l.relpath(name, "current"))
+	err = os.Rename(newsym, l.relpath(title, "current"))
 	if err != nil {
 		return fmt.Errorf("could not make symlink current %w", err)
 	}
@@ -57,16 +57,16 @@ func (l *localStorage) WriteArticle(name, content string) error {
 	return nil
 }
 
-func (l *localStorage) ReadArticle(name string) (string, error) {
-	return l.ReadArticleRevision(name, "current")
+func (l *localStorage) ReadArticle(title string) (string, error) {
+	return l.ReadArticleVersion(title, "current")
 }
 
-func (l *localStorage) ReadArticleRevision(name, revision string) (string, error) {
-	if !l.exists(name) {
+func (l *localStorage) ReadArticleVersion(title, version string) (string, error) {
+	if !l.exists(title) {
 		return "", errArticleDNE
 	}
 
-	data, err := os.ReadFile(l.relpath(name, revision))
+	data, err := os.ReadFile(l.relpath(title, version))
 	if err != nil {
 		return "", fmt.Errorf("could not read file: %w", err)
 	}
@@ -74,24 +74,24 @@ func (l *localStorage) ReadArticleRevision(name, revision string) (string, error
 	return string(data), nil
 }
 
-func (l *localStorage) ListArticleRevisions(name string) ([]string, error) {
-	if !l.exists(name) {
+func (l *localStorage) ListArticleVersions(title string) ([]string, error) {
+	if !l.exists(title) {
 		return nil, errArticleDNE
 	}
 
-	entries, err := os.ReadDir(l.relpath(name))
+	entries, err := os.ReadDir(l.relpath(title))
 	if err != nil {
 		return nil, fmt.Errorf("could not read directory: %w", err)
 	}
 
-	names := []string{}
+	versions := []string{}
 	for _, e := range entries {
 		if !e.IsDir() {
-			names = append(names, e.Name())
+			versions = append(versions, e.Name())
 		}
 	}
 
-	return names, nil
+	return versions, nil
 }
 
 func (l *localStorage) ListArticles() ([]string, error) {
@@ -100,14 +100,14 @@ func (l *localStorage) ListArticles() ([]string, error) {
 		return nil, fmt.Errorf("could not read directory: %w", err)
 	}
 
-	names := []string{}
+	titles := []string{}
 	for _, e := range entries {
 		if e.IsDir() {
-			names = append(names, e.Name())
+			titles = append(titles, e.Name())
 		}
 	}
 
-	return names, nil
+	return titles, nil
 }
 
 func ts() string {
@@ -118,8 +118,8 @@ func (l *localStorage) relpath(elem ...string) string {
 	return filepath.Join(append([]string{l.baseDirectory}, elem...)...)
 }
 
-func (l *localStorage) exists(name string) bool {
-	if _, err := os.Stat(l.relpath(name, "current")); err != nil {
+func (l *localStorage) exists(title string) bool {
+	if _, err := os.Stat(l.relpath(title, "current")); err != nil {
 		return false
 	} else {
 		return true

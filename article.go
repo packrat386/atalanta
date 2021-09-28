@@ -27,7 +27,7 @@ func handleArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *temp
 }
 
 func postArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *template.Template) {
-	name, err := articleName(r)
+	title, err := articleTitle(r)
 	if err != nil {
 		renderError(w, tmpl, err)
 		return
@@ -40,7 +40,7 @@ func postArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *templa
 	}
 
 	content := r.Form.Get("content")
-	err = s.WriteArticle(name, content)
+	err = s.WriteArticle(title, content)
 	if err != nil {
 		renderError(w, tmpl, fmt.Errorf("could not write article content:  %w", err))
 		return
@@ -55,15 +55,15 @@ type articleView struct {
 }
 
 func getArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *template.Template) {
-	name, err := articleName(r)
+	title, err := articleTitle(r)
 	if err != nil {
 		renderError(w, tmpl, err)
 		return
 	}
 
-	content, err := s.ReadArticle(name)
+	content, err := s.ReadArticle(title)
 	if errors.Is(err, errArticleDNE) {
-		render(w, tmpl, "article_dne.tmpl", articleView{Title: name})
+		render(w, tmpl, "article_dne.tmpl", articleView{Title: title})
 		return
 	} else if err != nil {
 		renderError(w, tmpl, fmt.Errorf("could not read article: %w", err))
@@ -71,7 +71,7 @@ func getArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *templat
 	}
 
 	a := articleView{
-		Title:   name,
+		Title:   title,
 		Content: content,
 	}
 
@@ -90,7 +90,7 @@ func getArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *templat
 
 var articlePathMatcher = regexp.MustCompile(`^/articles/([0-9a-zA-Z_]+)$`)
 
-func articleName(r *http.Request) (string, error) {
+func articleTitle(r *http.Request) (string, error) {
 	matches := articlePathMatcher.FindStringSubmatch(r.URL.Path)
 	if matches == nil {
 		return "", fmt.Errorf("invalid article URL")

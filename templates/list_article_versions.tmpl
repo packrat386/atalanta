@@ -1,0 +1,15 @@
+<html>
+  <head>
+    <title>{{ .Title }} - Versions</title>
+    <link rel="stylesheet" type="text/css" href="/styles.css"/>
+  </head>
+  <body>
+    <h1>Versions of {{ .Title }}</h1>
+    {{ $title := .Title }}
+    {{ range $versionID := .VersionIDs }}
+    <p><a href="/versions/{{ $title }}?version_id={{ $versionID }}">{{ $versionID }}</a></p>
+    {{ end }}
+    <hr>
+    <p><a href="/">Home</a></p>
+  </body>
+</html>

@@ -7,72 +7,61 @@ import (
 	"regexp"
 )
 
-func newArchiveHandler(s storage, tmpl *template.Template) http.Handler {
+func newVersionHandler(s storage, tmpl *template.Template) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		archiveHandler(w, r, s, tmpl)
+		versionHandler(w, r, s, tmpl)
 	})
 }
 
-var archivePathMatcher = regexp.MustCompile(`^/archives/([0-9a-zA-Z_]+)$`)
-
-func archiveName(r *http.Request) (string, error) {
-	matches := archivePathMatcher.FindStringSubmatch(r.URL.Path)
-	if matches == nil {
-		return "", fmt.Errorf("invalid archive URL")
-	}
-
-	return matches[1], nil
-}
-
-type revisionListView struct {
-	Title       string
-	RevisionIDs []string
-}
-
-type archiveView struct {
+type versionListView struct {
 	Title      string
-	RevisionID string
-	Content    string
+	VersionIDs []string
 }
 
-func archiveHandler(w http.ResponseWriter, r *http.Request, s storage, tmpl *template.Template) {
-	name, err := archiveName(r)
+type versionView struct {
+	Title     string
+	VersionID string
+	Content   string
+}
+
+func versionHandler(w http.ResponseWriter, r *http.Request, s storage, tmpl *template.Template) {
+	title, err := versionTitle(r)
 	if err != nil {
 		renderError(w, tmpl, err)
 		return
 	}
 
-	revisionID := r.URL.Query().Get("revision_id")
-	if revisionID == "" {
-		names, err := s.ListArticleRevisions(name)
+	versionID := r.URL.Query().Get("version_id")
+	if versionID == "" {
+		versions, err := s.ListArticleVersions(title)
 		if err != nil {
-			renderError(w, tmpl, fmt.Errorf("could not list article revisions: %w", err))
+			renderError(w, tmpl, fmt.Errorf("could not list article versions: %w", err))
 			return
 		}
 
 		render(
 			w,
 			tmpl,
-			"list_article_revisions.tmpl",
-			revisionListView{
-				Title:       name,
-				RevisionIDs: names,
+			"list_article_versions.tmpl",
+			versionListView{
+				Title:      title,
+				VersionIDs: versions,
 			},
 		)
 
 		return
 	}
 
-	content, err := s.ReadArticleRevision(name, revisionID)
+	content, err := s.ReadArticleVersion(title, versionID)
 	if err != nil {
-		renderError(w, tmpl, fmt.Errorf("could not get content of article revision: %w", err))
+		renderError(w, tmpl, fmt.Errorf("could not get content of article version: %w", err))
 		return
 	}
 
-	a := archiveView{
-		Title:      name,
-		RevisionID: revisionID,
-		Content:    content,
+	a := versionView{
+		Title:     title,
+		VersionID: versionID,
+		Content:   content,
 	}
 
 	if r.URL.Query().Get("raw") == "true" {
@@ -80,5 +69,16 @@ func archiveHandler(w http.ResponseWriter, r *http.Request, s storage, tmpl *tem
 		return
 	}
 
-	render(w, tmpl, "show_article_revision.tmpl", a)
+	render(w, tmpl, "show_article_version.tmpl", a)
+}
+
+var versionPathMatcher = regexp.MustCompile(`^/versions/([0-9a-zA-Z_]+)$`)
+
+func versionTitle(r *http.Request) (string, error) {
+	matches := versionPathMatcher.FindStringSubmatch(r.URL.Path)
+	if matches == nil {
+		return "", fmt.Errorf("invalid version URL")
+	}
+
+	return matches[1], nil
 }

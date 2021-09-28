@@ -1,13 +1,13 @@
 <html>
   <head>
-    <title>{{ .Title }} - {{ .RevisionID }}</title>
+    <title>{{ .Title }} - {{ .VersionID }}</title>
     <link rel="stylesheet" type="text/css" href="/styles.css"/>
   </head>
   <body>
-    <h1>{{ .Title }} - {{ .RevisionID }}</h1>
+    <h1>{{ .Title }} - {{ .VersionID }}</h1>
     <p>{{ .Content }}</p>
     <hr>
-    <p><a href="/archives/{{ .Title }}?raw=true">Raw</a></p>
+    <p><a href="/versions/{{ .Title }}?raw=true">Raw</a></p>
     <p><a href="/articles/{{ .Title }}">Current</a></p>
     <p><a href="/">Home</a></p>
   </body>

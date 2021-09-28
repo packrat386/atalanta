@@ -13,11 +13,11 @@ func newArticlesHandler(s storage, tmpl *template.Template) http.Handler {
 }
 
 func articlesHandler(w http.ResponseWriter, r *http.Request, s storage, tmpl *template.Template) {
-	names, err := s.ListArticles()
+	titles, err := s.ListArticles()
 	if err != nil {
 		renderError(w, tmpl, fmt.Errorf("could not list articles: %w", err))
 		return
 	}
 
-	render(w, tmpl, "list_articles.tmpl", names)
+	render(w, tmpl, "list_articles.tmpl", titles)
 }
