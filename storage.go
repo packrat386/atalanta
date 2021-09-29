@@ -84,10 +84,12 @@ func (l *localStorage) ListArticleVersions(title string) ([]string, error) {
 		return nil, fmt.Errorf("could not read directory: %w", err)
 	}
 
-	versions := []string{}
-	for _, e := range entries {
+	size := len(entries)
+	versions := make([]string, size)
+
+	for i, e := range entries {
 		if !e.IsDir() {
-			versions = append(versions, e.Name())
+			versions[(size-1)-i] = e.Name()
 		}
 	}
 
