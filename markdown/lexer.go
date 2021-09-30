@@ -1,4 +1,4 @@
-package main
+package markdown
 
 import (
 	"fmt"
@@ -12,6 +12,7 @@ const (
 	tokNewline
 	tokSpace
 	tokText
+	tokEOF
 )
 
 func (k tokenKind) String() string {
@@ -24,6 +25,8 @@ func (k tokenKind) String() string {
 		return "SPACE"
 	case tokText:
 		return "TEXT"
+	case tokEOF:
+		return "EOF"
 	default:
 		panic(fmt.Sprint("unexpected tokenKind: ", int64(k)))
 	}
@@ -85,7 +88,7 @@ func readTokenRuleset(tt []tokenRule, buf []byte) (token, bool) {
 	return token{}, false
 }
 
-func tokenize(buf []byte) ([]token, error) {
+func lex(buf []byte) ([]token, error) {
 	pos := 0
 	toks := []token{}
 
@@ -100,6 +103,8 @@ func tokenize(buf []byte) ([]token, error) {
 		toks = append(toks, tok)
 		pos += len(tok.value)
 	}
+
+	toks = append(toks, token{kind: tokEOF, value: []byte("")})
 
 	return toks, nil
 }

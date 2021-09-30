@@ -1,17 +1,17 @@
-package main
+package markdown
 
 import (
 	"fmt"
 	"testing"
 )
 
-func TestTokenize(t *testing.T) {
+func TestLex(t *testing.T) {
 	doc := `## header
 and a paragraph
 
 and another with a \#hashtag
 `
-	toks, err := tokenize([]byte(doc))
+	toks, err := lex([]byte(doc))
 	if err != nil {
 		t.Fatal("got error: ", err)
 	}
