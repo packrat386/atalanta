@@ -11,3 +11,19 @@ body {
 h1, h2, h3 {
     line-height: 1;
 }
+
+.article-content blockquote {
+    border-left: 5px solid #DDDDDD;
+    margin: 0;
+}
+
+.article-content blockquote p {
+    margin: 30px;
+}
+
+.article-content pre {
+    background: #111111;
+    color: green;
+    padding: 10px;
+    font-family: Consolas, monospace;
+}

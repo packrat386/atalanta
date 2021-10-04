@@ -97,7 +97,7 @@ func writeBlockQuoteToHTML(b *block, w io.Writer) {
 }
 
 func writeBlockCodeToHTML(b *block, w io.Writer) {
-	fmt.Fprintf(w, "<code_block>")
+	fmt.Fprintf(w, "<pre><code>")
 
 	b.text = bytes.TrimSuffix(b.text, []byte("\n"))
 	b.text = bytes.TrimSuffix(b.text, []byte("```"))
@@ -105,7 +105,7 @@ func writeBlockCodeToHTML(b *block, w io.Writer) {
 
 	fmt.Fprintf(w, html.EscapeString(string(b.text)))
 
-	fmt.Fprintf(w, "</code_block>")
+	fmt.Fprintf(w, "</code></pre>")
 }
 
 func writeBlockParagraphToHTML(b *block, w io.Writer) {

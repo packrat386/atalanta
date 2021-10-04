@@ -4,8 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
-	"io"
-	"log"
 	"net/http"
 	"regexp"
 )
@@ -51,6 +49,11 @@ func postArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *templa
 
 type articleView struct {
 	Title   string
+	Content template.HTML
+}
+
+type editArticleView struct {
+	Title   string
 	Content string
 }
 
@@ -70,22 +73,34 @@ func getArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *templat
 		return
 	}
 
-	a := articleView{
-		Title:   title,
-		Content: string(content),
-	}
-
 	if r.URL.Query().Get("raw") == "true" {
-		w.Write([]byte(a.Content))
+		w.Write(content)
 		return
 	}
 
 	if r.URL.Query().Get("edit") == "true" {
-		render(w, tmpl, "edit_article.tmpl", a)
+		render(
+			w,
+			tmpl,
+			"edit_article.tmpl",
+			editArticleView{
+				Title:   title,
+				Content: string(content),
+			},
+		)
+
 		return
 	}
 
-	render(w, tmpl, "show_article.tmpl", a)
+	render(
+		w,
+		tmpl,
+		"show_article.tmpl",
+		articleView{
+			Title:   title,
+			Content: md2html(content),
+		},
+	)
 }
 
 var articlePathMatcher = regexp.MustCompile(`^/articles/([0-9a-zA-Z_]+)$`)
@@ -97,20 +112,4 @@ func articleTitle(r *http.Request) (string, error) {
 	}
 
 	return matches[1], nil
-}
-
-func render(w io.Writer, tmpl *template.Template, name string, data interface{}) {
-	err := tmpl.ExecuteTemplate(w, name, data)
-	if err != nil {
-		log.Printf("error executing template '%s': %s", name, err.Error())
-	}
-}
-
-type errorView struct {
-	ErrorMessage string
-}
-
-func renderError(w http.ResponseWriter, tmpl *template.Template, err error) {
-	w.WriteHeader(http.StatusInternalServerError)
-	render(w, tmpl, "error.tmpl", errorView{ErrorMessage: err.Error()})
 }

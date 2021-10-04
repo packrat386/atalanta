@@ -21,7 +21,7 @@ type versionListView struct {
 type versionView struct {
 	Title     string
 	VersionID string
-	Content   string
+	Content   template.HTML
 }
 
 func versionHandler(w http.ResponseWriter, r *http.Request, s storage, tmpl *template.Template) {
@@ -61,7 +61,7 @@ func versionHandler(w http.ResponseWriter, r *http.Request, s storage, tmpl *tem
 	a := versionView{
 		Title:     title,
 		VersionID: versionID,
-		Content:   string(content),
+		Content:   md2html(content),
 	}
 
 	if r.URL.Query().Get("raw") == "true" {

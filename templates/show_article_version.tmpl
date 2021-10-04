@@ -5,7 +5,8 @@
   </head>
   <body>
     <h1>{{ .Title }} - {{ .VersionID }}</h1>
-    <p>{{ .Content }}</p>
+    <hr>
+    <div class="article-content">{{ .Content }}</div>
     <hr>
     <p><a href="/versions/{{ .Title }}?raw=true">Raw</a></p>
     <p><a href="/articles/{{ .Title }}">Current</a></p>

@@ -5,6 +5,7 @@
   </head>
   <body>
     <h1>{{ .Title }}</h1>
+    <hr>
     <form action="/articles/{{ .Title }}" method="post">
       <label for="content">Content:</label><br>
       <textarea id="content" name="content" rows="40" cols="80">{{ .Content }}</textarea>
