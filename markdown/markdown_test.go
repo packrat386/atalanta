@@ -17,10 +17,18 @@ func mustReadFixture(filename string) []byte {
 }
 
 func TestParseBlocks(t *testing.T) {
-	ast := parse(mustReadFixture("test_doc.md"))
+	ast := parseBlocks(mustReadFixture("test_doc.md"))
 
 	for _, b := range ast.blocks {
 		fmt.Println(b.kind)
 		fmt.Printf("%#v\n", string(b.text))
 	}
+}
+
+func TestGenerateHTML(t *testing.T) {
+	ast := parseBlocks(mustReadFixture("test_doc.md"))
+
+	html := generateHTML(ast)
+
+	fmt.Println(string(html))
 }

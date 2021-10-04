@@ -6,6 +6,10 @@ import (
 	"regexp"
 )
 
+type ast struct {
+	blocks []*block
+}
+
 type block struct {
 	kind blockKind
 	text []byte
@@ -53,7 +57,9 @@ func (b blockKind) String() string {
 	}
 }
 
-func parseBlocks(ast *AST, input []byte) {
+func parseBlocks(input []byte) *ast {
+	ast := &ast{blocks: []*block{}}
+
 	lines := bytes.SplitAfter(input, []byte("\n"))
 
 	var current *block
@@ -74,6 +80,7 @@ func parseBlocks(ast *AST, input []byte) {
 		continueBlock(current, l)
 	}
 
+	return ast
 }
 
 func openFirstBlock(line []byte) *block {
