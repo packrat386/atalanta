@@ -14,9 +14,9 @@ var (
 )
 
 type storage interface {
-	WriteArticle(title, content string) error
-	ReadArticle(title string) (string, error)
-	ReadArticleVersion(title, version string) (string, error)
+	WriteArticle(title string, content []byte) error
+	ReadArticle(title string) ([]byte, error)
+	ReadArticleVersion(title, version string) ([]byte, error)
 	ListArticleVersions(title string) ([]string, error)
 	ListArticles() ([]string, error)
 }
@@ -25,7 +25,7 @@ type localStorage struct {
 	baseDirectory string
 }
 
-func (l *localStorage) WriteArticle(title, content string) error {
+func (l *localStorage) WriteArticle(title string, content []byte) error {
 	if !l.exists(title) {
 		err := os.Mkdir(l.relpath(title), 0755)
 		if err != nil {
@@ -34,7 +34,7 @@ func (l *localStorage) WriteArticle(title, content string) error {
 	}
 
 	fname := l.relpath(title, ts())
-	err := os.WriteFile(fname, []byte(content), 0644)
+	err := os.WriteFile(fname, content, 0644)
 	if err != nil {
 		return fmt.Errorf("could not write file: %w", err)
 	}
@@ -57,21 +57,21 @@ func (l *localStorage) WriteArticle(title, content string) error {
 	return nil
 }
 
-func (l *localStorage) ReadArticle(title string) (string, error) {
+func (l *localStorage) ReadArticle(title string) ([]byte, error) {
 	return l.ReadArticleVersion(title, "current")
 }
 
-func (l *localStorage) ReadArticleVersion(title, version string) (string, error) {
+func (l *localStorage) ReadArticleVersion(title, version string) ([]byte, error) {
 	if !l.exists(title) {
-		return "", errArticleDNE
+		return nil, errArticleDNE
 	}
 
 	data, err := os.ReadFile(l.relpath(title, version))
 	if err != nil {
-		return "", fmt.Errorf("could not read file: %w", err)
+		return nil, fmt.Errorf("could not read file: %w", err)
 	}
 
-	return string(data), nil
+	return data, nil
 }
 
 func (l *localStorage) ListArticleVersions(title string) ([]string, error) {

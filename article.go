@@ -40,7 +40,7 @@ func postArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *templa
 	}
 
 	content := r.Form.Get("content")
-	err = s.WriteArticle(title, content)
+	err = s.WriteArticle(title, []byte(content))
 	if err != nil {
 		renderError(w, tmpl, fmt.Errorf("could not write article content:  %w", err))
 		return
@@ -72,7 +72,7 @@ func getArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *templat
 
 	a := articleView{
 		Title:   title,
-		Content: content,
+		Content: string(content),
 	}
 
 	if r.URL.Query().Get("raw") == "true" {
