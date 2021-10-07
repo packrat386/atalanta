@@ -210,7 +210,7 @@ func trimPrefix(buf []byte, prefix *regexp.Regexp) []byte {
 	return buf[idx[1]:]
 }
 
-var blankLine = regexp.MustCompile(`^\s+$`)
+var blankLine = regexp.MustCompile(`^\s*$`)
 
 func lineIsBlank(line []byte) bool {
 	return blankLine.Match(line)

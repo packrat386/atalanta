@@ -52,50 +52,46 @@ func writeBlockBlankToHTML(b *block, w io.Writer) {
 
 func writeBlockH1ToHTML(b *block, w io.Writer) {
 	fmt.Fprintf(w, "<h1>")
-	fmt.Fprintf(w, html.EscapeString(string(b.text)))
-	fmt.Fprintf(w, "</h1>")
+	w.Write(escapeHTMLBytes(bytes.TrimSuffix(b.text, []byte("\n"))))
+	fmt.Fprintf(w, "</h1>\n")
 }
 
 func writeBlockH2ToHTML(b *block, w io.Writer) {
 	fmt.Fprintf(w, "<h2>")
-	fmt.Fprintf(w, html.EscapeString(string(b.text)))
-
-	fmt.Fprintf(w, "</h2>")
+	w.Write(escapeHTMLBytes(bytes.TrimSuffix(b.text, []byte("\n"))))
+	fmt.Fprintf(w, "</h2>\n")
 }
 
 func writeBlockH3ToHTML(b *block, w io.Writer) {
 	fmt.Fprintf(w, "<h3>")
-	fmt.Fprintf(w, html.EscapeString(string(b.text)))
-
-	fmt.Fprintf(w, "</h3>")
+	w.Write(escapeHTMLBytes(bytes.TrimSuffix(b.text, []byte("\n"))))
+	fmt.Fprintf(w, "</h3>\n")
 }
 
 func writeBlockH4ToHTML(b *block, w io.Writer) {
 	fmt.Fprintf(w, "<h4>")
-	fmt.Fprintf(w, html.EscapeString(string(b.text)))
-
-	fmt.Fprintf(w, "</h4>")
+	w.Write(escapeHTMLBytes(bytes.TrimSuffix(b.text, []byte("\n"))))
+	fmt.Fprintf(w, "</h4>\n")
 }
 
 func writeBlockH5ToHTML(b *block, w io.Writer) {
 	fmt.Fprintf(w, "<h5>")
-	fmt.Fprintf(w, html.EscapeString(string(b.text)))
-
-	fmt.Fprintf(w, "</h5>")
+	w.Write(escapeHTMLBytes(bytes.TrimSuffix(b.text, []byte("\n"))))
+	fmt.Fprintf(w, "</h5>\n")
 }
 
 func writeBlockH6ToHTML(b *block, w io.Writer) {
 	fmt.Fprintf(w, "<h6>")
-	fmt.Fprintf(w, html.EscapeString(string(b.text)))
-
-	fmt.Fprintf(w, "</h6>")
+	w.Write(escapeHTMLBytes(bytes.TrimSuffix(b.text, []byte("\n"))))
+	fmt.Fprintf(w, "</h6>\n")
 }
 
 func writeBlockQuoteToHTML(b *block, w io.Writer) {
 	fmt.Fprintf(w, "<blockquote><p>")
-	w.Write(parseSpans(b.text).bytes())
 
-	fmt.Fprintf(w, "</p></blockquote>")
+	w.Write(bytes.TrimSuffix(parseSpans(b.text).bytes(), []byte("\n")))
+
+	fmt.Fprintf(w, "</p></blockquote>\n")
 }
 
 func writeBlockCodeToHTML(b *block, w io.Writer) {
@@ -105,17 +101,17 @@ func writeBlockCodeToHTML(b *block, w io.Writer) {
 	b.text = bytes.TrimSuffix(b.text, []byte("```"))
 	b.text = bytes.TrimPrefix(b.text, []byte("```\n"))
 
-	fmt.Fprintf(w, html.EscapeString(string(b.text)))
+	w.Write(escapeHTMLBytes(bytes.TrimSuffix(b.text, []byte("\n"))))
 
-	fmt.Fprintf(w, "</code></pre>")
+	fmt.Fprintf(w, "</code></pre>\n")
 }
 
 func writeBlockParagraphToHTML(b *block, w io.Writer) {
 	fmt.Fprintf(w, "<p>")
 
-	w.Write(parseSpans(b.text).bytes())
+	w.Write(bytes.TrimSuffix(parseSpans(b.text).bytes(), []byte("\n")))
 
-	fmt.Fprintf(w, "</p>")
+	fmt.Fprintf(w, "</p>\n")
 }
 
 type span struct {

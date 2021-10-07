@@ -38,6 +38,12 @@ func postArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *templa
 	}
 
 	content := r.Form.Get("content")
+
+	err = checkmd([]byte(content))
+	if err != nil {
+		renderError(w, tmpl, fmt.Errorf("article not saved: %w", err))
+	}
+
 	err = s.WriteArticle(title, []byte(content))
 	if err != nil {
 		renderError(w, tmpl, fmt.Errorf("could not write article content:  %w", err))
@@ -92,13 +98,18 @@ func getArticle(w http.ResponseWriter, r *http.Request, s storage, tmpl *templat
 		return
 	}
 
+	contentHTML, err := md2html(content)
+	if err != nil {
+		renderError(w, tmpl, err)
+	}
+
 	render(
 		w,
 		tmpl,
 		"show_article.tmpl",
 		articleView{
 			Title:   title,
-			Content: md2html(content),
+			Content: contentHTML,
 		},
 	)
 }

@@ -58,10 +58,15 @@ func versionHandler(w http.ResponseWriter, r *http.Request, s storage, tmpl *tem
 		return
 	}
 
+	contentHTML, err := md2html(content)
+	if err != nil {
+		renderError(w, tmpl, err)
+	}
+
 	a := versionView{
 		Title:     title,
 		VersionID: versionID,
-		Content:   md2html(content),
+		Content:   contentHTML,
 	}
 
 	if r.URL.Query().Get("raw") == "true" {

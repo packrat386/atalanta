@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"html/template"
 	"io"
 	"log"
@@ -25,6 +26,20 @@ func renderError(w http.ResponseWriter, tmpl *template.Template, err error) {
 	render(w, tmpl, "error.tmpl", errorView{ErrorMessage: err.Error()})
 }
 
-func md2html(input []byte) template.HTML {
-	return template.HTML(string(markdown.GenerateHTML(input)))
+func md2html(input []byte) (template.HTML, error) {
+	html, err := markdown.GenerateHTML(input)
+	if err != nil {
+		return template.HTML(""), fmt.Errorf("error generating html from markdown: %w", err)
+	}
+
+	return template.HTML(string(html)), nil
+}
+
+func checkmd(input []byte) error {
+	_, err := markdown.GenerateHTML(input)
+	if err != nil {
+		return fmt.Errorf("error parsing markdown: %w", err)
+	}
+
+	return nil
 }
