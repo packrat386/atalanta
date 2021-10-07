@@ -1,0 +1,22 @@
+<h1>h1</h1>
+<h2>h2</h2>
+<h3>h3</h3>
+<h4>h4</h4>
+<h5>h5</h5>
+<h6>h6</h6>
+<p>This is paragraph text.
+It may continue on a new line.</p>
+<p>This is a new paragraph.</p>
+<p>Paragraph text may be formatted. This is <em>emphasis</em> and <strong>strong emphasis</strong>.</p>
+<p>It can contain <a href="/to/other/stuff">links</a> inline.</p>
+<blockquote><p>This is a block quote.
+It may continue on a new line.</p></blockquote>
+<pre><code>This is a code block.
+
+Formatting in blocks is ignored, therefore:
+
+*this text isn&#39;t bold*
+
+# this isn&#39;t a header
+
+etc.</code></pre>

@@ -221,9 +221,6 @@ type delimiterStack struct {
 }
 
 func (d *delimiterStack) push(delim *delimiter) {
-	fmt.Println("push time")
-	printStack(d)
-
 	if d.begin == nil && d.end == nil {
 		d.begin = delim
 		d.end = delim
@@ -338,7 +335,6 @@ func consumeAsterisk(sl *spanList, ds *delimiterStack, input []byte, pos int) in
 
 	if pos > 0 {
 		canClose = closingAsteriskMatcher.Match(input[pos-1 : pos+1])
-		fmt.Printf("testing close: %#v -> %t\n", string(input[pos-1:pos+1]), canClose)
 	}
 
 	if pos+1 < len(input) {
@@ -346,7 +342,6 @@ func consumeAsterisk(sl *spanList, ds *delimiterStack, input []byte, pos int) in
 	}
 
 	if canOpen || canClose {
-		fmt.Println("did we ever?")
 		ds.push(&delimiter{
 			kind:     delimiterAsterisk,
 			span:     span,
@@ -401,7 +396,7 @@ func consumeOpenBracket(sl *spanList, ds *delimiterStack, input []byte, pos int)
 	return pos + 1
 }
 
-var linkURLMatcher = regexp.MustCompile(`\]\(([^\s\)]*)\)`)
+var linkURLMatcher = regexp.MustCompile(`\]\(([^\s\)]+)\)`)
 
 func consumeCloseBracket(sl *spanList, ds *delimiterStack, input []byte, pos int) int {
 	span := sl.push([]byte(`]`))
@@ -456,6 +451,12 @@ func consumeBackslash(sl *spanList, input []byte, pos int) int {
 	case bytes.Equal(next, []byte(`]`)):
 		sl.push([]byte(`]`))
 		return pos + 2
+	case bytes.Equal(next, []byte(`#`)):
+		sl.push([]byte(`#`))
+		return pos + 2
+	case bytes.Equal(next, []byte(`>`)):
+		sl.push([]byte(`>`))
+		return pos + 2
 	case bytes.Equal(next, []byte(`\`)):
 		sl.push([]byte(`\`))
 		return pos + 2
@@ -466,49 +467,29 @@ func consumeBackslash(sl *spanList, input []byte, pos int) int {
 }
 
 func processEmphasis(ds *delimiterStack) {
-	fmt.Println("process emphasis")
-	printStack(ds)
-
 	for closer := nextClosingDelimiter(ds); closer != nil; closer = nextClosingDelimiter(ds) {
-		fmt.Printf("found closer: %p\n", closer)
-
 		opener := openingDelimiter(ds, closer)
 		if opener == nil {
 			ds.rm(closer)
-
-			fmt.Println("no opener")
-			printStack(ds)
 			continue
 		}
 
-		fmt.Printf("found opener: %p\n", opener)
-
 		if opener.kind == delimiterUnderscore {
-			fmt.Printf("process underscore %p <-> %p\n", opener, closer)
 			opener.span.text = []byte("<em>")
 			closer.span.text = []byte("</em>")
 		}
 
 		if opener.kind == delimiterAsterisk {
-			fmt.Printf("process asterisk %p <-> %p\n", opener, closer)
 			opener.span.text = []byte("<strong>")
 			closer.span.text = []byte("</strong>")
 		}
 
 		rmBetween(ds, opener, closer)
-
-		fmt.Println("after process")
-		printStack(ds)
 	}
-
-	fmt.Println("done w/ emphasis")
-	printStack(ds)
 }
 
 func openingDelimiter(ds *delimiterStack, closer *delimiter) *delimiter {
-	fmt.Println("looking for opener")
 	for d := closer.prev; d != nil; d = d.prev {
-		fmt.Printf("checking %p\n", d)
 		if d.canOpen && d.kind == closer.kind {
 			return d
 		}
@@ -534,14 +515,6 @@ func rmBetween(ds *delimiterStack, begin *delimiter, end *delimiter) {
 		ds.rm(ptr)
 		ptr = next
 	}
-}
-
-func printStack(ds *delimiterStack) {
-	fmt.Println("BEGIN STACK")
-	for d := ds.begin; d != nil; d = d.next {
-		fmt.Printf("%p -> %s\n", d, d.String())
-	}
-	fmt.Println("END STACK")
 }
 
 func escapeHTMLBytes(in []byte) []byte {
