@@ -58,7 +58,7 @@ func main() {
 
 	srv := http.Server{
 		Addr:    os.Getenv("ATALANTA_ADDR"),
-		Handler: mux,
+		Handler: withLogging(mux),
 	}
 
 	idleConnsClosed := make(chan struct{})

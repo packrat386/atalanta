@@ -43,3 +43,23 @@ func checkmd(input []byte) error {
 
 	return nil
 }
+
+type loggingResponseWriter struct {
+	http.ResponseWriter
+	code int
+}
+
+func (l *loggingResponseWriter) WriteHeader(code int) {
+	l.code = code
+	l.ResponseWriter.WriteHeader(code)
+}
+
+func withLogging(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		lrw := &loggingResponseWriter{w, 200}
+
+		next.ServeHTTP(lrw, r)
+
+		log.Printf("%s [%d] %s", r.Method, lrw.code, r.URL.String())
+	})
+}
