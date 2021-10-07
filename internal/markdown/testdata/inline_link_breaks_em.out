@@ -1,1 +1,2 @@
 <p>links _have <a href="/to/stuff">precedence_ over</a> emphasis</p>
+<p>links also <a href="/to/stuff">do _not_ allow</a> emphasis inside</p>

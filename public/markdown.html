@@ -1,0 +1,154 @@
+<html>
+  <head>
+    <title>Markdown Syntax</title>
+    <link rel="stylesheet" type="text/css" href="/styles.css"/>
+  </head>
+
+  <body>
+    <div class="article-content">
+      <h1>Markdown Syntax</h1>
+      <p>Articles can by styled with markdown syntax. The examples that follow will show some example markdown and what it renders.</p>
+      <pre><code>A _fun_ example!</pre></code>
+      <hr>
+      <p>A <em>fun</em> example!</p>
+      <hr>
+
+      <h2>Headings</h2>
+      <p>Content headings can be made by beginning the line with '#'.</p>
+      <pre><code># h1
+## h2
+### h3
+#### h4
+##### h5
+###### h6</code></pre>
+      <hr>
+      <h1>h1</h1>
+      <h2>h2</h2>
+      <h3>h3</h3>
+      <h4>h4</h4>
+      <h5>h5</h5>
+      <h6>h6</h6>
+      <hr>
+      <p>These are examples of invalid headers.</p>
+      <pre><code>#no space
+
+####### 7 is too many
+
+\# escaped
+
+  # leading whitespace</code></pre>
+      <hr>
+      <p>#no space</p>
+      <p>####### 7 is too many</p>
+      <p># escaped</p>
+      <p>  # leading whitespace</p>
+
+      <h2>Block Quotes</h2>
+      <p>block quotes begin with '&gt;'.</p>
+      <pre><code>&gt; This is a block quote.
+
+&gt; It can span
+&gt; multiple lines.
+
+&gt; It can also continue
+without a leading '&gt;'.</code></pre>
+      <hr>
+      <blockquote><p>This is a block quote.</p></blockquote>
+      <blockquote><p>It can span
+          multuple lines.</p></blockquote>
+      <blockquote><p>It can also continue
+          without a leading '&gt;'.</p></blockquote>
+      <hr>
+      <p>These are examples of invalid blockquotes.</p>
+      <pre><code>&gt;&gt; double arrow
+
+  &gt; leading whitespace
+
+\&gt; escaped</code></pre>
+      <hr>
+      <p>&gt;&gt; double arrow</p>
+      <p>  &gt; leading whitespace</p>
+      <p>&gt; escaped</p>
+      <hr>
+
+      <h2>Code Blocks</h2>
+      <p>Code blocks are formed with ```.</p>
+      <pre><code>```
+inside the block
+```
+
+back outside
+
+```
+_formatting_ doesn't *happen* in here
+```
+
+It's also valid to have an unclosed code block at the end of a document
+
+```
+like so</code></pre>
+      <hr>
+      <pre><code>inside the block</code></pre>
+      <p>back outside</p>
+      <pre><code>_formatting_ doesn't *happen* in here</code></pre>
+      <p>It's also valid to have an unclosed code block at the end of a document</p>
+      <pre><code>like so</code></pre>
+      <hr>
+
+      <h2>Paragraphs</h2>
+      <p>Paragraphs are essentially everything else.</p>
+      <pre><code>This is a paragraph.
+It can continue onto a new line.
+
+An empty line ends a paragraph and starts a new one.</code></pre>
+      <hr>
+      <p>This is a paragraph.
+        It can continue onto a new line.
+      </p>
+      <p>An empty line ends a paragraph and starts a new one.</p>
+      <hr>
+
+      <h2>Inline Formatting</h2>
+      <p>You can apply style inline to paragraphs and block quotes</p>
+      <pre><code>You can use _emphasis_ or *strong emphasis*.
+
+You can also use _*both*_ at the same time.
+
+This is a [link](https://www.google.com/) that can be internal or external.
+
+For an internal link, just supply the path [like so](/howto.html).</code></pre>
+      <hr>
+      <p>You can use <em>emphasis</em> or <strong>strong emphasis</strong>.</p>
+      <p>You can also use <em><strong>both</strong></em> at the same time.</p>
+      <p>This is a <a href="https://www.google.com/">link</a> that can be internal or external.</p>
+      <p>For an internal link, just supply the path <a href="/howto.html">like so</a></p>
+      <hr>
+      <p>Here are some cases where the inline formatting doesn't do anything.</p>
+      <pre><code>too _ much _ whitespace
+
+both on the _same _side
+
+[*not* in](/markdown.html) links
+
+\*escaped\*</code></pre>
+      <hr>
+      <p>too _ much _ whitespace</p>
+      <p>both on the _same _side</p>
+      <p><a href="/markdown.html">*not* in</a> links</p>
+      <p>*escaped*</p>
+      <hr>
+      <p>In the case of overlapping inline formatting, links take precedence over emphasis and strong emphasis, otherwise whichever was closed first takes precedence.</p>
+      <pre><code>this *is [a* link](/markdown.html)
+
+this _is *emphasized_ not* strong
+
+this *is _strong* not_ emphasized</code></pre>
+      <hr>
+      <p>this *is <a href="/markdown.html">a* link</a></p>
+      <p>this <em>is *emphasized</em> not* strong</p>
+      <p>this <strong> is _strong</strong> not_ emphasized</p>
+      <hr>
+    </div>
+    <a href="/">Home</a>
+  </body>
+</html>

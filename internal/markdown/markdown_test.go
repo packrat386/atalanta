@@ -63,6 +63,7 @@ func TestGenerateHTML(t *testing.T) {
 		"header_no_lazy",
 		"blockquote",
 		"blockquote_lazy",
+		"blockquote_bad",
 		"code_block",
 		"code_block_no_close",
 		"paragraph",
