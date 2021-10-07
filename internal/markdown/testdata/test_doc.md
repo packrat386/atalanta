@@ -1,25 +1,30 @@
-# test doc
-We got some text in here
-it'll continue on the next line
+# h1
+## h2
+### h3
+#### h4
+##### h5
+###### h6
 
-This is a new paragraph
+This is paragraph text.
+It may continue on a new line.
 
-#this isn't a heading
+This is a new paragraph.
 
-## this is
+Paragraph text may be formatted. This is _emphasis_ and *strong emphasis*.
 
-> got a nice
->    looooooong
-> block quote too
+It can contain [links](/to/other/stuff) inline.
 
-```
-code in here is a block
-## so this isn't a heading
-
-> and this isn't a quote
-```
-
-and we're near the end
+> This is a block quote.
+> It may continue on a new line.
 
 ```
-unclosed codeblock
+This is a code block.
+
+Formatting in blocks is ignored, therefore:
+
+*this text isn't bold*
+
+# this isn't a header
+
+etc.
+```

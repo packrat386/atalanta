@@ -26,9 +26,22 @@ func TestParseBlocks(t *testing.T) {
 }
 
 func TestGenerateHTML(t *testing.T) {
-	ast := parseBlocks(mustReadFixture("test_doc.md"))
+	input := mustReadFixture("test_doc.md")
 
-	html := generateHTML(ast)
+	html, err := GenerateHTML(input)
+	if err != nil {
+		t.Fatal("unexpected error: ", err)
+	}
 
 	fmt.Println(string(html))
+}
+
+func TestInlineTextToHTML(t *testing.T) {
+	text := []byte(`yadda _yadda_ yadda *yadda yadda*.`)
+
+	sl := parseSpans(text)
+
+	for sp := sl.begin; sp != nil; sp = sp.next {
+		fmt.Printf("SPAN: %s\n", string(sp.text))
+	}
 }

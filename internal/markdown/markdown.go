@@ -2,10 +2,18 @@ package markdown
 
 import (
 	"bytes"
+	"fmt"
 )
 
-func GenerateHTML(input []byte) []byte {
-	return generateHTML(parseBlocks(sanitizeNewlines(input)))
+func GenerateHTML(input []byte) (html []byte, err error) {
+	defer func() {
+		if r := recover(); r != nil {
+			err = fmt.Errorf("%s", r)
+		}
+	}()
+
+	html = generateHTML(parseBlocks(sanitizeNewlines(input)))
+	return
 }
 
 func sanitizeNewlines(b []byte) []byte {
