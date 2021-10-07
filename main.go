@@ -39,12 +39,22 @@ func main() {
 		baseDirectory: storageBaseDirectory,
 	}
 
+	title := os.Getenv("ATALANTA_WIKI_TITLE")
+	if title == "" {
+		title = "Atalanta"
+	}
+
+	blurb := os.Getenv("ATALANTA_WIKI_BLURB")
+	if blurb == "" {
+		blurb = "Run free"
+	}
+
 	mux := http.NewServeMux()
 	mux.Handle("/goto", newGotoHandler())
 	mux.Handle("/articles/", newArticleHandler(storage, tmpl))
 	mux.Handle("/articles", newArticlesHandler(storage, tmpl))
 	mux.Handle("/versions/", newVersionHandler(storage, tmpl))
-	mux.Handle("/", http.FileServer(http.FS(public)))
+	mux.Handle("/", newPublicHandler(title, blurb, public, tmpl))
 
 	srv := http.Server{
 		Addr:    os.Getenv("ATALANTA_ADDR"),
