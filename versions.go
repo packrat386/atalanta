@@ -58,6 +58,11 @@ func versionHandler(w http.ResponseWriter, r *http.Request, s storage, tmpl *tem
 		return
 	}
 
+	if r.URL.Query().Get("raw") == "true" {
+		w.Write([]byte(content))
+		return
+	}
+
 	contentHTML, err := md2html(content)
 	if err != nil {
 		renderError(w, tmpl, err)
@@ -67,11 +72,6 @@ func versionHandler(w http.ResponseWriter, r *http.Request, s storage, tmpl *tem
 		Title:     title,
 		VersionID: versionID,
 		Content:   contentHTML,
-	}
-
-	if r.URL.Query().Get("raw") == "true" {
-		w.Write([]byte(a.Content))
-		return
 	}
 
 	render(w, tmpl, "show_article_version.tmpl", a)

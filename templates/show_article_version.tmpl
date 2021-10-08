@@ -9,7 +9,7 @@
     <hr>
     <div class="article-content">{{ .Content }}</div>
     <hr>
-    <p><a href="/versions/{{ .Title }}?raw=true">Raw</a></p>
+    <p><a href="/versions/{{ .Title }}?version_id={{ .VersionID}}&raw=true">Raw</a></p>
     <p><a href="/articles/{{ .Title }}">Current</a></p>
     <p><a href="/">Home</a></p>
   </body>
