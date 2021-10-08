@@ -9,6 +9,22 @@ A very simple wiki.
 
 ## Installing
 
+### Docker
+
+Docker images are hosted on GitHub Container Registry [here](https://github.com/packrat386/atalanta/pkgs/container/atalanta)
+
+If you want your storage to persist between container runs you'll need to mount a directory. For example:
+
+```
+docker run \
+  -p 9000:80 \
+  --mount type=bind,source=/var/wikidata,target=/wikidata \
+  --env ATALANTA_BASE_DIR=/wikidata \
+  ghcr.io/packrat386/atalanta:latest
+```
+
+### From Source
+
 Install via `go install`
 
 ```
@@ -32,11 +48,12 @@ To run simply run the binary.
 ATALANTA_BASE_DIR=~/wikidata ATALANTA_ADDR=':9000' atalanta
 ```
 
+Logs are sent to standard outut.
+
 ## Coming Later?
 
 Things I may add one day
 
-* Docker image
 * Tests
 * Pruning of storage
 * Configurable storage
