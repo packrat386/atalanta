@@ -35,8 +35,9 @@ func main() {
 		storageBaseDirectory = "."
 	}
 
-	storage := &localStorage{
-		baseDirectory: storageBaseDirectory,
+	storage, err := NewLocalStorage(storageBaseDirectory)
+	if err != nil {
+		panic(err)
 	}
 
 	title := os.Getenv("ATALANTA_WIKI_TITLE")

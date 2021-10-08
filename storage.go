@@ -25,6 +25,15 @@ type localStorage struct {
 	baseDirectory string
 }
 
+func NewLocalStorage(base string) (storage, error) {
+	baseDirectory, err := filepath.Abs(base)
+	if err != nil {
+		return nil, fmt.Errorf("could not resolve absolute file path: %w", err)
+	}
+
+	return &localStorage{baseDirectory: baseDirectory}, nil
+}
+
 func (l *localStorage) WriteArticle(title string, content []byte) error {
 	if !l.exists(title) {
 		err := os.Mkdir(l.relpath(title), 0755)
