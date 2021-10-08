@@ -17,5 +17,7 @@ jobs:
           go-version: '1.17.2'
       - run: |
           FMT_OUT=$(gofmt -l .) && echo $FMT_OUT && test -z $FMT_OUT
+      - run: |
           go vet ./...
+      - run: |
           go test -v ./...
