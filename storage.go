@@ -49,7 +49,7 @@ func (l *localStorage) WriteArticle(title string, content []byte) error {
 	}
 
 	newsym := fname + "_ptr"
-	err = os.Symlink(fname, newsym)
+	err = os.Symlink(filepath.Base(fname), newsym)
 	if err != nil {
 		return fmt.Errorf("could not symlink: %w", err)
 	}
