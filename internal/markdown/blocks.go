@@ -6,6 +6,7 @@ import (
 	"regexp"
 )
 
+// ast is a ast
 type ast struct {
 	blocks []*block
 }
